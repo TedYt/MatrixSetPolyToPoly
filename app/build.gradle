@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.ted.empty"
+        applicationId "com.ted.matrixptp"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
