@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
         /**
          * 原图每块的宽度
          */
-        private int mFlodWidth;
+        private int mFoldWidth;
 
         /**
          * 折叠时 每快的宽度
          */
-        private int mTranslateDisPerFlod;
+        private int mTranslateDisPerFold;
 
         Bitmap mBitmap;
 
@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
             //折叠后每快的总宽度
             mTranslateDis = (int)(mBitmap.getWidth() * mFactor);
             //原图每快的宽度
-            mFlodWidth = mBitmap.getWidth() / mNumOffFolds;
+            mFoldWidth = mBitmap.getWidth() / mNumOffFolds;
             //折叠时，没快的宽度
-            mTranslateDisPerFlod = mTranslateDis / mNumOffFolds;
+            mTranslateDisPerFold = mTranslateDis / mNumOffFolds;
 
             for (int i = 0; i < mNumOffFolds; i++){
                 mMatrices[i] = new Matrix();
@@ -95,32 +95,33 @@ public class MainActivity extends AppCompatActivity {
 
             mShadowPaint.setShader(mShadowGradientShader);
             mShadowGradientMatrix = new Matrix();
-            mShadowGradientMatrix.setScale(mFlodWidth, 1);
+            mShadowGradientMatrix.setScale(mFoldWidth, 1);
             mShadowGradientShader.setLocalMatrix(mShadowGradientMatrix);
             mShadowPaint.setAlpha(alpha);
 
             //纵轴减小的高度，用够股定理计算
-            int depth = (int) Math.sqrt(mFlodWidth * mFlodWidth -
-                    mTranslateDisPerFlod * mTranslateDisPerFlod) / 2;
+            int depth = (int) Math.sqrt(mFoldWidth * mFoldWidth -
+                    mTranslateDisPerFold * mTranslateDisPerFold);
+            depth = depth / 2;//高度减半
 
             //转换点
             float[] src = new float[mNumOffFolds];
             float[] dst = new float[mNumOffFolds];
 
             for (int i = 0; i < mNumOffFolds; i++){
-                src[0] = i * mFlodWidth;
+                src[0] = i * mFoldWidth;
                 src[1] = 0;
-                src[2] = src[0] + mFlodWidth;
+                src[2] = src[0] + mFoldWidth;
                 src[3] = 0;
-                src[4] = src[0] + mFlodWidth;
+                src[4] = src[0] + mFoldWidth;
                 src[5] = mBitmap.getHeight();
                 src[6] = src[0];
                 src[7] = src[5];
 
                 boolean isEven = i % 2 == 0;
-                dst[0] = i * mTranslateDisPerFlod;
+                dst[0] = i * mTranslateDisPerFold;
                 dst[1] = isEven ? 0 : depth;
-                dst[2] = dst[0] + mTranslateDisPerFlod;
+                dst[2] = dst[0] + mTranslateDisPerFold;
                 dst[3] = isEven ? depth : 0;
                 dst[4] = dst[2];
                 dst[5] = isEven ? mBitmap.getHeight() - depth : mBitmap.getHeight();
@@ -139,18 +140,18 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < mNumOffFolds; i ++){
                 canvas.save();
                 canvas.concat(mMatrices[i]);//使用矩阵
-                canvas.clipRect(mFlodWidth * i, 0, mFlodWidth * i + mFlodWidth,
+                canvas.clipRect(mFoldWidth * i, 0, mFoldWidth * i + mFoldWidth,
                             mBitmap.getHeight());
                 canvas.drawBitmap(mBitmap,0,0, null);
 
                 //移动绘制阴影
-                canvas.translate(mFlodWidth * i, 0);
+                canvas.translate(mFoldWidth * i, 0);
                 if (i % 2 == 0){
                     //绘制黑色遮盖
-                    canvas.drawRect(0,0,mFlodWidth,mBitmap.getHeight(),mSolidPaint);
+                    canvas.drawRect(0,0,mFoldWidth,mBitmap.getHeight(),mSolidPaint);
                 }else {
                     //绘制阴影
-                    canvas.drawRect(0,0,mFlodWidth,mBitmap.getHeight(),mShadowPaint);
+                    canvas.drawRect(0,0,mFoldWidth,mBitmap.getHeight(),mShadowPaint);
                 }
                 canvas.restore();
             }
