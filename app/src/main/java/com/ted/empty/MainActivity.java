@@ -57,10 +57,16 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap mBitmap;
 
-        Matrix mMatrix;
+        /**
+         * 绘制黑色透明区域
+          */
+        private Paint mSolidPaint;
 
+        /**
+         *绘制阴影
+         */
         private Paint mShadowPaint;
-        private Matrix mShadowGradienMatrix;
+        private Matrix mShadowGradientMatrix;
         private LinearGradient mShadowGradientShader;
 
         public PolyToPolyView(Context context) {
@@ -77,6 +83,21 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < mNumOffFolds; i++){
                 mMatrices[i] = new Matrix();
             }
+
+            mSolidPaint = new Paint();
+            int alpha = (int)(255 * mFactor * 0.8f);
+            mSolidPaint.setColor(Color.argb((int)(alpha*0.8f),0,0,0));
+
+            mShadowPaint = new Paint();
+            mShadowPaint.setStyle(Paint.Style.FILL);
+            mShadowGradientShader = new LinearGradient(0,0,0.5f,0,
+                        Color.BLACK,Color.TRANSPARENT, Shader.TileMode.CLAMP);
+
+            mShadowPaint.setShader(mShadowGradientShader);
+            mShadowGradientMatrix = new Matrix();
+            mShadowGradientMatrix.setScale(mFlodWidth, 1);
+            mShadowGradientShader.setLocalMatrix(mShadowGradientMatrix);
+            mShadowPaint.setAlpha(alpha);
 
             //纵轴减小的高度，用够股定理计算
             int depth = (int) Math.sqrt(mFlodWidth * mFlodWidth -
@@ -109,46 +130,28 @@ public class MainActivity extends AppCompatActivity {
                 mMatrices[i].setPolyToPoly(src,0,dst,0,src.length >> 1);
 
             }
-
-            /*mMatrix = new Matrix();
-
-            mShadowPaint = new Paint();
-            mShadowPaint.setStyle(Paint.Style.FILL);
-            mShadowGradientShader = new LinearGradient(0,0,0.5f,0,
-                    Color.BLACK, Color.TRANSPARENT, Shader.TileMode.CLAMP);
-
-            mShadowPaint.setShader(mShadowGradientShader);
-
-            mShadowGradienMatrix = new Matrix();
-            mShadowGradienMatrix.setScale(mBitmap.getWidth(), 1);
-            mShadowGradientShader.setLocalMatrix(mShadowGradienMatrix);
-            mShadowPaint.setAlpha((int)0.9*255);*/
-
-
         }
 
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
-            //canvas.save();
-
-            /*float[] src = {0, 0,
-                    mBitmap.getWidth(), 0,
-                    mBitmap.getWidth(), mBitmap.getHeight(),
-                    0, mBitmap.getHeight()};
-            float[] dst = {0,0,
-                    mBitmap.getWidth(), 100,
-                    mBitmap.getWidth(),mBitmap.getHeight() - 100,
-                    0, mBitmap.getHeight()};
-            mMatrix.setPolyToPoly(src,0,dst,0,src.length >> 1);*/
 
             for (int i = 0; i < mNumOffFolds; i ++){
                 canvas.save();
-                canvas.concat(mMatrices[i]);
+                canvas.concat(mMatrices[i]);//使用矩阵
                 canvas.clipRect(mFlodWidth * i, 0, mFlodWidth * i + mFlodWidth,
                             mBitmap.getHeight());
                 canvas.drawBitmap(mBitmap,0,0, null);
 
+                //移动绘制阴影
+                canvas.translate(mFlodWidth * i, 0);
+                if (i % 2 == 0){
+                    //绘制黑色遮盖
+                    canvas.drawRect(0,0,mFlodWidth,mBitmap.getHeight(),mSolidPaint);
+                }else {
+                    //绘制阴影
+                    canvas.drawRect(0,0,mFlodWidth,mBitmap.getHeight(),mShadowPaint);
+                }
                 canvas.restore();
             }
 
