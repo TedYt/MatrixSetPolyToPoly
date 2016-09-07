@@ -88,16 +88,18 @@ public class MainActivity extends AppCompatActivity {
             int alpha = (int)(255 * mFactor * 0.8f);
             mSolidPaint.setColor(Color.argb((int)(alpha*0.8f),0,0,0));
 
+            //初始化 paint
             mShadowPaint = new Paint();
             mShadowPaint.setStyle(Paint.Style.FILL);
+            mShadowPaint.setAlpha(alpha);
+            //paint 设置 shader
             mShadowGradientShader = new LinearGradient(0,0,0.5f,0,
                         Color.BLACK,Color.TRANSPARENT, Shader.TileMode.CLAMP);
-
             mShadowPaint.setShader(mShadowGradientShader);
+            //shader设置matrix
             mShadowGradientMatrix = new Matrix();
             mShadowGradientMatrix.setScale(mFoldWidth, 1);
             mShadowGradientShader.setLocalMatrix(mShadowGradientMatrix);
-            mShadowPaint.setAlpha(alpha);
 
             //纵轴减小的高度，用够股定理计算
             int depth = (int) Math.sqrt(mFoldWidth * mFoldWidth -
