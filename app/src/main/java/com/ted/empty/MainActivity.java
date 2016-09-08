@@ -15,13 +15,14 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    FoldLayout mFoldLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(new PolyToPolyView(this));
-
+        //setContentView(new PolyToPolyView(this));
+        setContentView(R.layout.fold_layout);
+        mFoldLayout = (FoldLayout)findViewById(R.id.id_fold_layout);
     }
 
     class PolyToPolyView extends View{
