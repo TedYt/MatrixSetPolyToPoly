@@ -40,7 +40,7 @@ public class FoldLayout  extends ViewGroup{
     /**
      * 折叠后的总宽度与原图宽度的比例
      */
-    private float mFactor = 0.8f;
+    private float mFactor = 1.0f;
 
     /**
      * 折叠的块数
