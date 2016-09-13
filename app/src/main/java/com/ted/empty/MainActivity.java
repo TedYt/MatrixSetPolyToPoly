@@ -11,8 +11,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(new PolyToPolyView(this));
-        setContentView(R.layout.fold_layout);
-        mFoldLayout = (FoldLayout)findViewById(R.id.id_fold_layout);
+        //setContentView(R.layout.fold_layout);
+        //mFoldLayout = (FoldLayout)findViewById(R.id.id_fold_layout);
+        setContentView(R.layout.sliding_panel_layout);
     }
 
 }
